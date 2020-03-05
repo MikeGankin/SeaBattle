@@ -41,16 +41,13 @@ const show = {
 
 const fire = (event) => {
     const target = event.target;
+    if(target.classList.lenght > 0) return;
     show.miss(target);
     play.upgradeData = 'shot';
 };
 
-const onceCliker = {
-    once:true
-}
-
 const init = () => {
-     enemy.addEventListener('click', fire, onceCliker);
+     enemy.addEventListener('click', fire);
 };
 
 init();
