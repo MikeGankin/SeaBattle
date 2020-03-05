@@ -4,6 +4,29 @@ const hit = document.getElementById('hit');
 const dead = document.getElementById('dead');
 const enemy = document.getElementById('enemy');
 const again = document.getElementById('again');
+const header = document.querySelector('.header');
+
+const game = {
+    ships: [
+        {
+            location: ['26', '36', '46', '56'],
+            hit: ['', '', '', '']
+        }, 
+        {
+            location: ['11', '12', '13'],
+            hit: ['', '', '']
+        }, 
+        {
+            location: ['69', '79'],
+            hit: ['', '']
+        }, 
+        {
+            location: ['32'],
+            hit: ['']
+        }
+    ],
+    shipCount: 4,
+};
 
 const play = {
     record: 0,
@@ -11,7 +34,7 @@ const play = {
     hit: 0,
     dead: 0,
     
-    set upgradeData(data) {
+    set updateData(data) {
         this[data] += 1;
         this.render();
     },
@@ -25,14 +48,14 @@ const play = {
 };
 
 const show = {
-    hit() {
-        
+    hit(elem) {
+        this.changeClass(elem, 'hit')
     },
     miss(elem) {
         this.changeClass(elem, 'miss');
     },
-    dead() {
-        
+    dead(elem) {
+        this.changeClass(elem, 'dead')
     },
     changeClass(elem, value) {
         elem.className = value;
@@ -41,9 +64,32 @@ const show = {
 
 const fire = (event) => {
     const target = event.target;
-    if(target.classList.lenght > 0) return;
+    if (target.classList.length > 0 || target.tagName !== 'TD') return;
     show.miss(target);
-    play.upgradeData = 'shot';
+    play.updateData = 'shot';
+
+    for (let i = 0; i < game.ships.length; i++) {
+        const ship = game.ships[0];
+        const index = ship.location.indexOf(target.id);
+        if (index >= 0) {
+            show.hit(target);
+            play.updateData = 'hit';
+            ship.hit[index] = 'x';
+            const strength = ship.hit.indexOf(' ');
+            if (strength < 0) {
+                play.updateData = 'dead';
+                for (const id of ship.location) {
+                    show.dead(document.getElementById(id));
+                }
+
+                game.shipCount -+1;
+
+                if (game.shipCount < 1) {
+                    header.textContent = 'Game Over';
+                }
+            }
+        }
+    }
 };
 
 const init = () => {
