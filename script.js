@@ -29,7 +29,7 @@ const game = {
 };
 
 const play = {
-    record: 0,
+    record: localStorage.getItem('seaBattleRecord') || 0,
     shot: 0,
     hit: 0,
     dead: 0,
@@ -69,23 +69,30 @@ const fire = (event) => {
     play.updateData = 'shot';
 
     for (let i = 0; i < game.ships.length; i++) {
-        const ship = game.ships[0];
+        const ship = game.ships[i];
         const index = ship.location.indexOf(target.id);
         if (index >= 0) {
             show.hit(target);
             play.updateData = 'hit';
             ship.hit[index] = 'x';
-            const strength = ship.hit.indexOf(' ');
+            const strength = ship.hit.indexOf('');
             if (strength < 0) {
                 play.updateData = 'dead';
                 for (const id of ship.location) {
                     show.dead(document.getElementById(id));
                 }
 
-                game.shipCount -+1;
+                game.shipCount -= 1;
 
                 if (game.shipCount < 1) {
-                    header.textContent = 'Game Over';
+                    header.textContent = 'Game Over!';
+                    header.style.color = 'red';
+
+                    if (play.shot < play.record || play.record === 0) {
+                        localStorage.setItem('seaBattleRecord', play.shot)
+                        play.record = play.shot;
+                        play.render();
+                    }
                 }
             }
         }
@@ -94,6 +101,11 @@ const fire = (event) => {
 
 const init = () => {
      enemy.addEventListener('click', fire);
+     play.render();
+
+     again.addEventListener('click', () => {
+         location.reload();
+     });
 };
 
 init();
