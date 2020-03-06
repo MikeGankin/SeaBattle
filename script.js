@@ -17,9 +17,9 @@ const game = {
 
     generateShip() {
         for (let i = 0; i < this.optionShips.count.length; i++) {
-             for (let j = 0; j< this.optionShips.count[i]; j++) {
+             for (let j = 0; j < this.optionShips.count[i]; j++) {
                  const size = this.optionShips.size[i];
-                 const ship = this.generateOptionShip();
+                 const ship = this.generateOptionsShip(size);
                  this.ships.push(ship);
                  this.shipCount++;
              }
@@ -34,6 +34,7 @@ const game = {
 
         const direction = Math.random() < 0.5;
         let x, y;
+
         if (direction === true) {
             x = Math.floor(Math.random() * 10)
             y = Math.floor(Math.random() * (10 - shipSize))
@@ -54,6 +55,8 @@ const game = {
         if (this.checkCollision(ship.location)) {
             return this.generateOptionsShip(shipSize)
         }
+
+        this.addCollision(ship.location);
 
         return ship;
     },
@@ -158,18 +161,18 @@ const fire = (event) => {
 };
 
 const init = () => {
-     enemy.addEventListener('click', fire);
-     play.render();
-     game.generateShip();
+    enemy.addEventListener('click', fire);
+    play.render();
+    game.generateShip();
 
-     again.addEventListener('click', () => {
-         location.reload();
-     });
-     record.addEventListener('dblclick', () => {
-         localStorage.clear();
-         play.record = 0;
-         play.render();
-     });
+    again.addEventListener('click', () => {
+        location.reload();
+    });
+    record.addEventListener('dblclick', () => {
+        localStorage.clear();
+        play.record = 0;
+        play.render();
+    });
 };
 
 init();
